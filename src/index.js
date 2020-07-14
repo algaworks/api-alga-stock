@@ -13,7 +13,7 @@ app.use(cors())
 
 app.get('/products', async (req, res) => {
   try {
-    const products = await db.getAllData()
+    const products = await db.products.getAllData()
     res
       .send(products)
   } catch (err) {
