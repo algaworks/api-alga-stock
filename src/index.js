@@ -153,7 +153,6 @@ app.get('/buy/:productId', auth.checker, async (req, res) => {
   }
 })
 
-
 app
   .listen(3024, err => {
     console.log('http://localhost:3024')
