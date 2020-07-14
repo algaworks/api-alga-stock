@@ -1,0 +1,291 @@
+openapi: "3.0.0"
+
+info:
+  version: "1.0"
+  title: AlgaStock
+  description: "This is the API spect used during the \"Ignição React\" course"
+  contact:
+    name: Daniel Bonifacio
+    email: daniel.bonifacio@algaworks.com
+
+servers:
+  - url: https://localhost:3024
+    description: Local server
+
+paths:
+  /products:
+    get:
+      summary: "Get all products"
+      description: "Get all products stored and they relative id, price, available stock and a bunch of metadata."
+      operationId: getAllProducts
+      tags: 
+        - products
+      responses:
+        200:
+          description: Sunrise and sunset times response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+    post:
+      description: 'Insert a new product'
+      operationId: addProduct
+      security:
+        - BearerAuth: [admin]
+      tags:
+        - products
+      requestBody:
+        required: true
+        content:
+           application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Cookie
+                price:
+                  type: number
+                  minimum: 0
+                  format: float
+                  example: 1.5
+                stock:
+                  type: number
+                  minimum: 0
+                  format: integer
+                  example: 25
+      responses:
+        201:
+          description: Product sucessfully created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Product sucessfully created'
+        403:
+          description: You don't have permission to create products
+  
+  /products/{productId}:
+    get:
+      summary: "Get single product"
+      description: "Get a single product and they relative id, price, available stock and a bunch of metadata."
+      operationId: deleteSingleProduct
+      tags: 
+        - products
+      parameters:
+        - name: productId
+          in: path
+          description: "Id of the single product that you want to retrieve information."
+          required: true
+          schema:
+            type: string
+          example: "CTcswP9kijnxwFp6"
+      responses:
+        200:
+          description: Single product response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+    delete:
+      summary: "Delete single product"
+      description: "Deletes a product and all him information"
+      operationId: getSingleProduct
+      security:
+        - BearerAuth: [admin]
+      tags: 
+        - products
+      parameters:
+        - name: productId
+          in: path
+          description: "ID of the single product that you want to delete."
+          required: true
+          schema:
+            type: string
+          example: "CTcswP9kijnxwFp6"
+      responses:
+        200:
+          description: Product sucessfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Product sucessfully deleted'
+        403:
+          description: You don't have permission to delete this product
+    put:
+      description: 'Update product fields'
+      operationId: updateProduct
+      security:
+        - BearerAuth: [admin]
+      tags:
+        - products
+      parameters:
+        - name: productId
+          in: path
+          description: "ID of the single product that you want to update."
+          required: true
+          schema:
+            type: string
+          example: "CTcswP9kijnxwFp6"
+      requestBody:
+        description: '**Note:** You can provide only the fields that you want to update, like: `{ price: 1.75 }`'
+        content:
+           application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Cookie
+                price:
+                  type: number
+                  minimum: 0
+                  format: float
+                  example: 1.75
+                stock:
+                  type: number
+                  minimum: 0
+                  format: integer
+                  example: 35
+      responses:
+        200:
+          description: Product sucessfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Product sucessfully updated'
+        403:
+          description: You don't have permission to update products
+  /buy:
+    get:
+      summary: "Buy one product"
+      description: "Buy a product if it has available stock"
+      operationId: buyOneProduct
+      security: 
+        - BearerAuth: [customer]
+      tags: 
+        - products
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Product successfully bought'
+        404:
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Product not found'
+        401:
+          description: No more stock
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Product has no more stock'
+  /login:
+    post:
+      description: 'SignIn User'
+      operationId: signInUser
+      tags:
+        - authentication
+      requestBody:
+        required: true
+        content:
+           application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: string
+                  example: daniel
+                pass:
+                  type: string
+                  example: s3curepassword123
+      responses:
+        200:
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    description: 'The logged in user ID'
+                    example: 'mvpht5Ylt3GaGIeE'
+                  name:
+                    type: string
+                    description: 'The logged in user name'
+                    example: 'Daniel Bonifacio'
+                  email:
+                    type: string
+                    description: 'The logged in user email'
+                    example: 'daniel.bonifacio@algaworks.com'
+                  token:
+                    type: string
+                    description: 'The logged in user unique token'
+                    example: 'Ge6HkvYS9dtypYl6?Ge6HkvYS9dtypYl6?Ge6HkvYS9dtypYl6'
+        401:
+          description: Wrong credentials
+          content:
+            application/json:
+              schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "We could not log you in"
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Authentication'
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: 'The product ID'
+        name:
+          type: string
+          description: 'The product name'
+        price:
+          type: number
+          description: 'The product price'
+        stock:
+          type: string
+          description: 'The available stock of the product'
+tags:
+  - name: products
+    description: Everything about products
+  - name: authentication
+    description: User access
