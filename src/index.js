@@ -23,6 +23,22 @@ app.get('/products', async (req, res) => {
   }
 })
 
+app.get('/products/:productId', (req, res) => {
+  try {
+    db.products.findOne({ _id: req.params.productId }, (err, product) => {
+      if (err) throw err
+
+      if (product) return res.send(product)
+      return res.status(404).send({ message: 'Product not found' })
+    })
+    
+  } catch (err) {
+    res
+      .status(500)
+      .send({ message: err.message })
+  }
+})
+
 app.post('/products', auth.checker, async (req, res) => {
   try {
     const product = {
@@ -98,55 +114,43 @@ app.post('/login', (req, res) => {
   }
 })
 
-app.get('/buy/:productId', auth.checker, (req, res) => {
+app.get('/buy/:productId', auth.checker, async (req, res) => {
   try {
     const { productId } = req.params
-    let message, status
+    let message, status = 200
 
-    const product = db.products.find({ _id: productId })
-    
-    if (product) {
-      if (product.stock > 0) {
-        db.products.update({ _id: productId }, {
-          $set: {
-            stock: product.stock - 1
-          }
-        })
-        status = 200
-        message = 'Product successfully bought'
+    db.products.findOne({ _id: productId }, async (err, product) => {
+      console.log(product)
+      if (product) {
+        if (product.stock > 0) {
+          await db.products.update(
+            { _id: productId },
+            { $set: { stock: product.stock - 1 } },
+            (err) => {
+              if (err) {
+                throw err
+              }
+              res
+                .status(200)
+                .send({ message: 'Product successfully bought' })
+            }
+          )
+        } else {
+          res
+            .status(401)
+            .send({ message: 'Product has no more stock' })
+        }
       } else {
-        status = 401
-        message = 'Product has no more stock'
+        res
+          .status(404)
+          .send({ message: 'Product not found' })
       }
-    } else {
-      status = 404
-      message = 'Product not found'
-    }
-
-    res
-      .status(status)
-      .send({ message })
+    })   
   } catch (err) {
     res
       .status(500)
       .send({ message: err.message })
   }
-
-  const newProducts = products.map(product => {
-    if (product.id == productId) {
-      selectedProduct = product
-      return {
-        ...product,
-        stock: product.stock -1
-      }
-    }
-
-    return product
-  })
-
-  set('products', newProducts)
-
-  res.send({ message: `You bought ${selectedProduct.name}` })
 })
 
 

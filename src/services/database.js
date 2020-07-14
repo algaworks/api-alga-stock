@@ -1,12 +1,12 @@
 const Datastore = require('nedb')
 
 const products = new Datastore({
-  filename: 'products',
+  filename: 'products.db',
   autoload: true
 })
 
 const users = new Datastore({
-  filename: 'users',
+  filename: 'users.db',
   autoload: true
 })
 
