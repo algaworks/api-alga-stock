@@ -30,7 +30,8 @@ paths:
                 items:
                   $ref: '#/components/schemas/Product'
     post:
-      description: 'Insert a new product'
+      summary: "Insert a new product"
+      description: "Insert a new product on the store"
       operationId: addProduct
       security:
         - BearerAuth: [admin]
@@ -59,16 +60,10 @@ paths:
       responses:
         201:
           description: Product sucessfully created
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: 'Product sucessfully created'
-        403:
+        401:
           description: You don't have permission to create products
+        403:
+          $ref: '#/components/responses/UnauthorizedError'
   
   /products/{productId}:
     get:
@@ -91,7 +86,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Product'
+                $ref: "#/components/schemas/Product"
     delete:
       summary: "Delete single product"
       description: "Deletes a product and all him information"
@@ -111,18 +106,13 @@ paths:
       responses:
         200:
           description: Product sucessfully deleted
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: 'Product sucessfully deleted'
-        403:
+        401:
           description: You don't have permission to delete this product
-    put:
-      description: 'Update product fields'
+        403:
+          $ref: '#/components/responses/UnauthorizedError'
+    patch:
+      summary: "Update product fields"
+      description: "Update specific product fields that"
       operationId: updateProduct
       security:
         - BearerAuth: [admin]
@@ -159,48 +149,35 @@ paths:
       responses:
         200:
           description: Product sucessfully updated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: 'Product sucessfully updated'
-        403:
+        401:
           description: You don't have permission to update products
-  /buy:
+        403:
+          $ref: '#/components/responses/UnauthorizedError'
+  /buy/{productId}:
     get:
       summary: "Buy one product"
       description: "Buy a product if it has available stock"
       operationId: buyOneProduct
+      parameters:
+        - name: productId
+          in: path
+          description: The ID of the product that you want to buy
+          required: true
+          schema:
+            type: string
+            example: "CTcswP9kijnxwFp6"
+            
       security: 
         - BearerAuth: [customer]
       tags: 
         - products
       responses:
         200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: 'Product successfully bought'
+          description: Product successfully bought
         404:
           description: Product not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: 'Product not found'
         401:
-          description: No more stock
+          description: 'Product has no more stock'
           content:
             application/json:
               schema:
@@ -209,9 +186,12 @@ paths:
                   message:
                     type: string
                     example: 'Product has no more stock'
+                    
+        403:
+          $ref: '#/components/responses/UnauthorizedError'
   /login:
     post:
-      description: 'SignIn User'
+      description: "SignIn User"
       operationId: signInUser
       tags:
         - authentication
@@ -267,7 +247,10 @@ components:
     BearerAuth:
       type: http
       scheme: bearer
-      description: 'Authentication'
+      bearerFormat: JWT
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
   schemas:
     Product:
       type: object
@@ -275,15 +258,19 @@ components:
         _id:
           type: string
           description: 'The product ID'
+          example: "CTcswP9kijnxwFp6"
         name:
           type: string
           description: 'The product name'
+          example: "Cookie"
         price:
           type: number
           description: 'The product price'
+          example: 1.5
         stock:
           type: string
-          description: 'The available stock of the product'
+          description: "The available stock of the product"
+          example: 25
 tags:
   - name: products
     description: Everything about products
