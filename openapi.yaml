@@ -87,6 +87,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Product"
+        404:
+          description: Product not found
+
     delete:
       summary: "Delete single product"
       description: "Deletes a product and all him information"

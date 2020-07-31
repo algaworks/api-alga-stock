@@ -1,7 +1,5 @@
-const checker = require('./checker')
-const login = require('./login')
-
 module.exports = {
-  login,
-  checker
+  login: require('./login'),
+  requiresAuthentication: require('./requiresAuthentication'),
+  requiresAdmin: require('./requiresAdmin')
 }
