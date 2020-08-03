@@ -4,6 +4,10 @@ const Express = require('express')
  * @type {Express.RequestHandler}
  */
 module.exports = function requiresAuthentication (req, res, next) {
+  if (process.env.DISABLE_SECURITY) {
+    return next()
+  }
+  
   const { authorization } = req.headers
 
   if (!authorization) {
