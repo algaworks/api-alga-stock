@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/index.js",
-    "setup": "node src/services/setup.js"
+    "setup": "node src/services/setup.js",
+    "hard-reset": "node src/services/hardReset.js"
   },
   "keywords": [],
   "author": "",
