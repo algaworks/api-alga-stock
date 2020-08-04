@@ -14,7 +14,8 @@ module.exports = function updateSingleProduct (req, res) {
 
     Database.products.update(
       { _id: productId },
-      { $set: product }, null,
+      { $set: product },
+      { multi: true },
       (err) => {
         if (err) throw err
 
@@ -22,7 +23,7 @@ module.exports = function updateSingleProduct (req, res) {
           .status(200)
           .send()
       }
-    )    
+    )
   } catch (err) {
     res
       .status(500)
