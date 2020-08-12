@@ -1,7 +1,7 @@
 openapi: "3.0.0"
 
 info:
-  version: "1.0"
+  version: "1.1"
   title: AlgaStock
   description: "This is the API spect used during the \"Ignição React\" course"
   contact:
@@ -64,7 +64,6 @@ paths:
           description: You don't have permission to create products
         403:
           $ref: '#/components/responses/UnauthorizedError'
-  
   /products/{productId}:
     get:
       summary: "Get single product"
@@ -219,22 +218,32 @@ paths:
               schema:
                 type: object
                 properties:
-                  id:
-                    type: number
+                  _id:
+                    type: string
                     description: 'The logged in user ID'
                     example: 'mvpht5Ylt3GaGIeE'
-                  name:
+                  user:
                     type: string
                     description: 'The logged in user name'
-                    example: 'Daniel Bonifacio'
+                    example: 'danielbonifacio'
                   email:
                     type: string
                     description: 'The logged in user email'
                     example: 'daniel.bonifacio@algaworks.com'
+                  role:
+                    type: string
+                    description: 'User role (admin or customer)'
+                    example: 'customer'
                   token:
                     type: string
                     description: 'The logged in user unique token'
                     example: 'Ge6HkvYS9dtypYl6?Ge6HkvYS9dtypYl6?Ge6HkvYS9dtypYl6'
+                  createdAt:
+                    type: string
+                    example: '2020-08-04T12:45:28.612Z'
+                  updatedAt:
+                    type: string
+                    example: '2020-08-04T12:45:28.612Z'
         401:
           description: Wrong credentials
           content:
