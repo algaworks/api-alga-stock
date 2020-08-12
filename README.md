@@ -37,6 +37,14 @@ CUSTOMER_TOKEN=tops3cr3tt0k3n321
 
 Congrats! You're done.
 
+## Security
+
+By default, the AlgaStock API came with some protected routes that needs authentication. If you're not interested in authentication by now, you can disable it by adding the following line in the end of the `.env` file:
+
+```.env
+DISABLE_SECURITY=true
+```
+
 ## Start
 
 ``` bash
