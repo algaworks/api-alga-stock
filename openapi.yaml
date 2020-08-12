@@ -191,7 +191,7 @@ paths:
                     
         403:
           $ref: '#/components/responses/UnauthorizedError'
-  /login:
+  /authentication/login:
     post:
       description: "SignIn User"
       operationId: signInUser
